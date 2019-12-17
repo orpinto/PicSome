@@ -1,18 +1,35 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { ShopContext } from "../ShopContext";
+import PropTypes from "prop-types";
+import useHover from "../hooks/useHover";
 
 function Image({ className, img }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const { toggleFavorite } = useContext(ShopContext);
+  const [ref, isHovered] = useHover();
+  const { toggleFavorite, addToCart, cartItems, removeFromCart } = useContext(
+    ShopContext
+  );
 
-  const cart = isHovered && <i className="ri-add-circle-line cart"></i>;
+  function cart() {
+    const alreadyInCart = cartItems.find(item => item.id === img.id);
+    if (isHovered && !alreadyInCart) {
+      return (
+        <i
+          onClick={() => addToCart(img)}
+          className="ri-add-circle-line cart"
+        ></i>
+      );
+    } else if (alreadyInCart) {
+      return (
+        <i
+          onClick={() => removeFromCart(img)}
+          className="ri-shopping-cart-fill cart"
+        ></i>
+      );
+    }
+  }
 
   return (
-    <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`${className} image-container`}
-    >
+    <div ref={ref} className={`${className} image-container`}>
       {img.isFavorite && (
         <i
           className="ri-heart-fill favorite"
@@ -25,10 +42,19 @@ function Image({ className, img }) {
           className="ri-heart-line favorite"
         ></i>
       )}
-      {cart}
+      {cart()}
       <img src={img.url} className="image-grid" />
     </div>
   );
 }
+
+Image.propTypes = {
+  className: PropTypes.string.isRequired,
+  img: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    isFavorite: PropTypes.bool.isRequired,
+    url: PropTypes.string.isRequired
+  })
+};
 
 export default Image;

@@ -4,6 +4,7 @@ const ShopContext = React.createContext();
 
 function ShopContextProvider(props) {
   const [pictures, setPictures] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
 
   //create methods
   useEffect(() => {
@@ -25,8 +26,36 @@ function ShopContextProvider(props) {
     setPictures(updatedArr);
   }
 
+  function addToCart(img) {
+    setCartItems([...cartItems, img]);
+  }
+
+  function removeFromCart(img) {
+    const updatedArr = [];
+    cartItems.forEach(item => {
+      if (item.id !== img.id) {
+        updatedArr.push(item);
+      }
+    });
+
+    setCartItems(updatedArr);
+  }
+
+  function emptyCart() {
+    setCartItems([]);
+  }
+
   return (
-    <ShopContext.Provider value={{ pictures, toggleFavorite }}>
+    <ShopContext.Provider
+      value={{
+        pictures,
+        toggleFavorite,
+        cartItems,
+        addToCart,
+        removeFromCart,
+        emptyCart
+      }}
+    >
       {props.children}
     </ShopContext.Provider>
   );

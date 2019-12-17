@@ -3,5 +3,7 @@ export function getClass(i) {
     return "big";
   } else if (i % 6 === 0) {
     return "wide";
+  } else {
+    return "none";
   }
 }
